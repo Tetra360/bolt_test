@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      target: runner
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_ML_API_URL=http://localhost:5001
+    depends_on:
+      - backend
+    volumes:
+      - ./app:/app/app
+      - ./components:/app/components
+      - ./lib:/app/lib
+      - ./public:/app/public
+      - ./styles:/app/styles
+      - ./types:/app/types
+      - ./config.ts:/app/config.ts
+      - ./next.config.js:/app/next.config.js
+      - ./package.json:/app/package.json
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./python-server:/app
+    restart: unless-stopped
